@@ -14,18 +14,14 @@ const loginDuration   = new Trend('login_duration');
 const errorRate       = new Rate('errors');
 const requestCount    = new Counter('requests_total');
 
-// Em CI (variável CI=true) usa carga reduzida para validação rápida.
-// Localmente e no Jenkins usa carga completa.
-const isCI = __ENV.CI === 'true';
-
 export const options = {
-  vus:      isCI ? 10 : 50,
+  vus: 50,
   duration: '30s',
   thresholds: {
     http_req_duration:  ['p(95)<500'],
     http_req_failed:    ['rate<0.05'],
     errors:             ['rate<0.05'],
-    product_duration:   [isCI ? 'p(95)<800' : 'p(95)<400'],
+    product_duration:   ['p(95)<400'],
     login_duration:     ['p(95)<600'],
   },
 };
