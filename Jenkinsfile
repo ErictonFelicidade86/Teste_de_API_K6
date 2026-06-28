@@ -39,25 +39,33 @@ pipeline {
 
         stage('Smoke Test') {
             steps {
-                bat 'docker run --rm --name k6_smoke %IMAGE_K6% run smoke-test.js'
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    bat 'docker run --rm --name k6_smoke %IMAGE_K6% run smoke-test.js'
+                }
             }
         }
 
         stage('Load Test') {
             steps {
-                bat 'docker run --rm --name k6_load %IMAGE_K6% run load-test.js'
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    bat 'docker run --rm --name k6_load %IMAGE_K6% run load-test.js'
+                }
             }
         }
 
         stage('Stress Test') {
             steps {
-                bat 'docker run --rm --name k6_stress %IMAGE_K6% run stress-test.js'
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    bat 'docker run --rm --name k6_stress %IMAGE_K6% run stress-test.js'
+                }
             }
         }
 
         stage('Spike Test') {
             steps {
-                bat 'docker run --rm --name k6_spike %IMAGE_K6% run spike-test.js'
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    bat 'docker run --rm --name k6_spike %IMAGE_K6% run spike-test.js'
+                }
             }
         }
     }
