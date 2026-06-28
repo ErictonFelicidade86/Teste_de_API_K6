@@ -26,38 +26,38 @@ pipeline {
                     usernameVariable: 'GH_USER',
                     passwordVariable: 'GH_TOKEN'
                 )]) {
-                    sh 'echo $GH_TOKEN | docker login ghcr.io -u $GH_USER --password-stdin'
+                    bat 'echo %GH_TOKEN% | docker login ghcr.io -u %GH_USER% --password-stdin'
                 }
             }
         }
 
         stage('Pull Imagem K6') {
             steps {
-                sh 'docker pull $IMAGE_K6'
+                bat 'docker pull %IMAGE_K6%'
             }
         }
 
         stage('Smoke Test') {
             steps {
-                sh 'docker run --rm --name k6_smoke $IMAGE_K6 run smoke-test.js'
+                bat 'docker run --rm --name k6_smoke %IMAGE_K6% run smoke-test.js'
             }
         }
 
         stage('Load Test') {
             steps {
-                sh 'docker run --rm --name k6_load $IMAGE_K6 run load-test.js'
+                bat 'docker run --rm --name k6_load %IMAGE_K6% run load-test.js'
             }
         }
 
         stage('Stress Test') {
             steps {
-                sh 'docker run --rm --name k6_stress $IMAGE_K6 run stress-test.js'
+                bat 'docker run --rm --name k6_stress %IMAGE_K6% run stress-test.js'
             }
         }
 
         stage('Spike Test') {
             steps {
-                sh 'docker run --rm --name k6_spike $IMAGE_K6 run spike-test.js'
+                bat 'docker run --rm --name k6_spike %IMAGE_K6% run spike-test.js'
             }
         }
     }
@@ -70,7 +70,7 @@ pipeline {
             echo '❌ Falha detectada! Verifique os logs acima.'
         }
         always {
-            sh 'docker logout ghcr.io'
+            bat 'docker logout ghcr.io'
         }
     }
 }
