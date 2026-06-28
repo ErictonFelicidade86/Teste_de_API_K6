@@ -8,7 +8,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/teste_de_api_k6/k6
 
 jobs:
   test-k6:
@@ -44,12 +43,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Gerar nome da imagem em lowercase
+        id: image
+        run: echo "name=${{ env.REGISTRY }}/${{ github.repository_owner }}/teste_de_api_k6/k6" | tr '[:upper:]' '[:lower:]' >> $GITHUB_OUTPUT
+
       - name: Build e Push da imagem K6
         uses: docker/build-push-action@v5
         with:
           context: ./k6
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ${{ steps.image.outputs.name }}:latest
+            ${{ steps.image.outputs.name }}:${{ github.sha }}
 
