@@ -25,7 +25,7 @@ jobs:
         run: k6 run k6/tests/smoke-test.js
 
       - name: Load Test
-        run: k6 run k6/tests/load-test.js
+        run: k6 run -e CI=true k6/tests/load-test.js
 
   build-and-push:
     name: Build e Push da imagem Docker
