@@ -1,0 +1,57 @@
+name: CI — K6 Tests & Docker Push
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/k6
+
+jobs:
+  test-k6:
+    name: Rodar testes K6
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Instalar K6
+        uses: grafana/setup-k6-action@v1
+
+      - name: Smoke Test
+        run: k6 run k6/tests/smoke-test.js
+
+      - name: Load Test
+        run: k6 run k6/tests/load-test.js
+
+  build-and-push:
+    name: Build e Push da imagem Docker
+    needs: test-k6
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Login no GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build e Push da imagem K6
+        uses: docker/build-push-action@v5
+        with:
+          context: ./k6
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
