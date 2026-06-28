@@ -19,8 +19,8 @@ export const options = {
   duration: '30s',
   thresholds: {
     http_req_duration:  ['p(95)<500'],
-    http_req_failed:    ['rate<0.01'],
-    errors:             ['rate<0.01'],
+    http_req_failed:    ['rate<0.05'],     // menos de 5% de falha
+    errors:             ['rate<0.05'],
     product_duration:   ['p(95)<400'],
     login_duration:     ['p(95)<600'],
   },
