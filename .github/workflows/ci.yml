@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/k6
+  IMAGE_NAME: ${{ github.repository_owner }}/teste_de_api_k6/k6
 
 jobs:
   test-k6:
@@ -52,3 +52,4 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
