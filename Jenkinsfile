@@ -7,8 +7,10 @@ pipeline {
     }
 
     environment {
-        REGISTRY  = 'ghcr.io'
-        IMAGE_K6  = 'ghcr.io/erictonfelicidade86/teste_de_api_k6/k6:latest'
+        REGISTRY   = 'ghcr.io'
+        IMAGE_K6   = 'ghcr.io/erictonfelicidade86/teste_de_api_k6/k6:latest'
+        INFLUXDB   = 'http://host.docker.internal:8086/k6'
+        K6_NETWORK = 'teste_de_api_k6_k6-monitoring'
     }
 
     stages {
@@ -40,7 +42,7 @@ pipeline {
         stage('Smoke Test') {
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    bat 'docker run --rm --name k6_smoke %IMAGE_K6% run smoke-test.js'
+                    bat 'docker run --rm --name k6_smoke --network %K6_NETWORK% -e K6_OUT=influxdb=%INFLUXDB% %IMAGE_K6% run --out influxdb=%INFLUXDB% smoke-test.js'
                 }
             }
         }
@@ -48,7 +50,7 @@ pipeline {
         stage('Load Test') {
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    bat 'docker run --rm --name k6_load %IMAGE_K6% run load-test.js'
+                    bat 'docker run --rm --name k6_load --network %K6_NETWORK% %IMAGE_K6% run --out influxdb=%INFLUXDB% load-test.js'
                 }
             }
         }
@@ -56,7 +58,7 @@ pipeline {
         stage('Stress Test') {
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    bat 'docker run --rm --name k6_stress %IMAGE_K6% run stress-test.js'
+                    bat 'docker run --rm --name k6_stress --network %K6_NETWORK% %IMAGE_K6% run --out influxdb=%INFLUXDB% stress-test.js'
                 }
             }
         }
@@ -64,7 +66,7 @@ pipeline {
         stage('Spike Test') {
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    bat 'docker run --rm --name k6_spike %IMAGE_K6% run spike-test.js'
+                    bat 'docker run --rm --name k6_spike --network %K6_NETWORK% %IMAGE_K6% run --out influxdb=%INFLUXDB% spike-test.js'
                 }
             }
         }
