@@ -64,6 +64,26 @@ docker run --rm k6-fakestore run stress-test.js
 docker run --rm k6-fakestore run spike-test.js
 ```
 
+## Monitoramento com Grafana
+
+A stack de monitoramento permite visualizar as métricas dos testes em tempo real.
+
+```bash
+# Subir InfluxDB + Grafana
+docker compose up -d
+
+# Acessar o Grafana
+http://localhost:3005
+```
+
+O dashboard **k6 Load Testing Results** é provisionado automaticamente e exibe:
+- Virtual Users ao longo do tempo
+- Requests per Second
+- Errors per Second
+- Latência (mean, max, p90, p95) em tempo real
+
+Para visualizar uma execução ao vivo, suba a stack e dispare o pipeline Jenkins — os dados chegam no Grafana a cada 5 segundos.
+
 ## Thresholds
 
 | Teste   | p(95) duração | Taxa de falha |
