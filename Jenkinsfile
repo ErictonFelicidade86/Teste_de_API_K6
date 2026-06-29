@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     triggers {
-        // Executa todo dia às 08:00 e às 20:00
-        cron('0 8,20 * * *')
+        // Executa às 06h, 09h, 12h, 15h, 18h, 21h e 00h — segunda, quarta e sexta
+        cron('0 0,6,9,12,15,18,21 * * 1,3,5')
     }
 
     environment {
