@@ -19,7 +19,7 @@ services:
       - influxdb_data:/var/lib/influxdb
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:8.5.27
     container_name: k6_grafana
     networks:
       - k6-monitoring
